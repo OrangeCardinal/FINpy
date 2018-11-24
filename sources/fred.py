@@ -2,6 +2,7 @@ import csv
 import certifi
 import logging
 import json
+from urllib.parse import urlencode
 import urllib3
 import tempfile
 import zipfile
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class FederalReserveEconomicData(object):
     FRED_FINPY_API_KEY = "d0a92dbe5ee12c742168bd38ad20f9db"  # API Key for this module (can be shared)
-    LIBOR_CSV_URL = "https://fred.stlouisfed.org/categories/33003/downloaddata/LIBOR_csv_2.zip"
+    BASE_URL = "https://api.stlouisfed.org/fred/"
 
     #TODO: change file_type to response_type (DataFrame, xml, json, dict)
     def __init__(self, user_api_key=None):
@@ -18,6 +19,20 @@ class FederalReserveEconomicData(object):
         if user_api_key:
             self.api_key = user_api_key
 
+
+    def _get_data(self, url, params):
+        """
+        Makes the actual request to the FRED API, parses the response as needed, and returns the requested data
+        :param url:
+        :param params: url GET parameters
+        :return:
+        """
+        encoded_params = urlencode(params)
+        url = "{0}{1}?{2}".format(self.BASE_URL, url, encoded_params)
+        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+        response = http.request('GET', url)
+        json_data = json.loads(response.data)
+        return json_data
 
     ####################
     ## Core API Calls ##
@@ -29,12 +44,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = 'category'
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def category_children(self, category_id=0, realtime_start=None, realtime_end=None, file_type='json'):
         """
@@ -44,12 +56,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category/children?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "category/children"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def category_related(self, category_id=0, realtime_start=None, realtime_end=None, file_type='json'):
         """
@@ -59,12 +68,11 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category/related?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+
+        url = "category/related"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
+
 
     def category_series(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -76,12 +84,10 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category/related?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "category/series"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
+
 
     def category_tags(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -93,12 +99,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category/related?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "category/tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def category_related_tags(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -110,146 +113,117 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/category/related_tags?category_id={2}&api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type, category_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "category/related_tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def releases(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/releases.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/releases?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "releases"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def releases_date(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/releases?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "releases/date"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release(self, release_id, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_date(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/date?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/date"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_series(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/series"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_sources(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/sources"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_tags(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_related_tags(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/related_tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def release_tables(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
 
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "release/tables"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def series(self, series_id:str, realtime_start=None, realtime_end=None, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/series.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series?api_key={0}&file_type={1}&series_id={2}"
-        url = url.format(self.api_key, file_type, series_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'series_id':series_id}
+        return self._get_data(url, params)
 
-    def series_categories(self, file_type='json'):
+    def series_categories(self, series_id:str, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/series_categories.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/sources?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "sources"
+        params = {'file_type': file_type, 'api_key': self.api_key, "series_id":series_id}
+        return self._get_data(url, params)
 
-    def series_observations(self, file_type='json'):
+    def series_observations(self, series_id:str, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/series_observations.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/observations?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = 'series/observations'
+        params = {'file_type':file_type, 'api_key':self.api_key,'series_id':series_id}
+        return self._get_data(url, params)
 
     def series_release(self, file_type='json'):
         """
@@ -257,12 +231,10 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/release?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/release"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
+
 
     def series_search(self, search_text:str, file_type='json'):
         """
@@ -270,13 +242,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/search?api_key={0}&file_type={1}&search_text={2}"
-        url = url.format(self.api_key, file_type, search_text)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        print(json_data)
-        return json_data
+        url = "series/search"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
 
 
@@ -286,12 +254,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/search/related_tags?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/search/related_tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def series_search_tags(self, file_type='json'):
         """
@@ -299,12 +264,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/observations?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/observations"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def series_tags(self, file_type='json'):
         """
@@ -312,12 +274,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/updates?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/updates"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def series_updates(self, realtime_start=None, realtime_end=None, limit=None, offset=None, filter_value=None,
                     time_start=None, time_end=None, file_type='json'):
@@ -333,12 +292,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/tags?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/tags"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def series_vintagedates(self, series_id, realtime_start=None, realtime_end=None, limit=None, offset=None,
                             sort_order=None, file_type='json'):
@@ -355,12 +311,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/vintagedates?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "series/vintagedates"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'category_id': category_id}
+        return self._get_data(url, params)
 
     def sources(self, file_type='json'):
         """
@@ -371,11 +324,9 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/sources?api_key={0}&file_type={1}".format(self.api_key, file_type)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET',url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "fred/sources"
+        params = {'file_type': file_type, 'api_key': self.api_key}
+        return self._get_data(url, params)
 
 
     def source(self, source_id, file_type='json'):
@@ -385,22 +336,18 @@ class FederalReserveEconomicData(object):
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/source?source_id={2}&api_key={0}&file_type={1}".format(self.api_key, file_type, source_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "fred/source"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'source_id': source_id}
+        return self._get_data(url, params)
 
     def source_releases(self, source_id, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/source_releases.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/source/releases?source_id={2}&api_key={0}&file_type={1}".format(self.api_key, file_type, source_id)
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        response = http.request('GET', url)
-        json_data = json.loads(response.data)
-        return json_data
+        url = "source/releases"
+        params = {'file_type': file_type, 'api_key': self.api_key, 'source_id': source_id}
+        return self._get_data(url, params)
 
     ###########################
     ## Convenience Functions ##
