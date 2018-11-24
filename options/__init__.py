@@ -1,5 +1,6 @@
 from math import sqrt,log,pow, exp, e, pi
 import numpy
+from statistics import mean, stdev
 from scipy.stats import norm
 
 
@@ -63,6 +64,33 @@ def price_european_call(initial_price, strike, interest_rate, remaining_time, vo
     result = initial_price * norm.cdf(d_plus) - discounted_strike * norm.cdf(d_minus)
 
     return result
+
+def price_european_call_monte_carlo(initial_price, strike, interest_rate, remaining_time, volatility, M=1000):
+    """
+
+    :param initial_price:
+    :param strike:
+    :param interest_rate:
+    :param remaining_time:
+    :param volatility:
+    :param M:
+    """
+    # generate M samples from N(0,1)
+    X = numpy.random.randn(M)
+
+    # simulate M trajectories in one step
+    ST = initial_price * numpy.exp((interest_rate - 0.5 * volatility ** 2) * remaining_time +
+                                   volatility * numpy.sqrt(remaining_time) * X)
+
+    # define payoff
+    payoff = numpy.where(ST < strike, 0, ST - strike)  # acts as max(ST-K, 0)
+
+    # MC estimate
+    discount_factor = numpy.exp(-interest_rate * remaining_time)
+
+    option_price = discount_factor * mean(payoff)
+    option_std_dev = discount_factor * stdev(payoff) / sqrt(M)
+    return option_price, option_std_dev
 
 
 def call_theta(price, strike, vol, risk_free_rate, dividend_rate, remaining_time, T):
