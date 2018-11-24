@@ -1,4 +1,5 @@
 from math import sqrt,log,pow, exp, e, pi
+import numpy
 from scipy.stats import norm
 
 
@@ -39,6 +40,30 @@ def call_price(price, strike, vol, risk_free_rate, dividend_rate, remaining_time
 
     result = (price * exp(-1 * dividend_rate * remaining_time) * norm.cdf(d1)) - (strike * exp(-1 * risk_free_rate * remaining_time) * norm.cdf(d2))
     return result
+
+
+def price_european_call(initial_price, strike, interest_rate, remaining_time, volatility):
+    """
+    Price a european call option using the Black-Scholes-Merton model
+
+    :param initial_price:
+    :param strike:
+    :param interest_rate:
+    :param remaining_time:
+    :param volatility:
+    :return: Price of the option
+    """
+
+    discounted_strike = numpy.exp(-interest_rate * remaining_time) * strike
+    total_volatility = volatility * numpy.sqrt(remaining_time)
+
+    d_minus = numpy.log(initial_price / discounted_strike) / total_volatility - .5 * total_volatility
+    d_plus = d_minus + total_volatility
+
+    result = initial_price * norm.cdf(d_plus) - discounted_strike * norm.cdf(d_minus)
+
+    return result
+
 
 def call_theta(price, strike, vol, risk_free_rate, dividend_rate, remaining_time, T):
     """
