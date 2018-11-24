@@ -1,7 +1,7 @@
 import csv
 import certifi
 import logging
-import os
+import json
 import urllib3
 import tempfile
 import zipfile
@@ -33,7 +33,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def category_children(self, category_id=0, realtime_start=None, realtime_end=None, file_type='json'):
         """
@@ -47,7 +48,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def category_related(self, category_id=0, realtime_start=None, realtime_end=None, file_type='json'):
         """
@@ -61,7 +63,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def category_series(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -77,7 +80,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def category_tags(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -93,7 +97,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def category_related_tags(self, category_id=0, realtime_start=None, realtime_end=None, limit=None, offset=None,
                         order=None, sort_order=None, filter_variable=None, filter_value=None,
@@ -109,7 +114,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type, category_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def releases(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -119,7 +125,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/releases?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def releases_date(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -129,7 +136,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/releases?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release(self, release_id, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -139,7 +147,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_date(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -149,7 +158,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/date?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_series(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -159,7 +169,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_sources(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -169,7 +180,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_tags(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -179,7 +191,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_related_tags(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -189,7 +202,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def release_tables(self, realtime_start=None, realtime_end=None, limit=None, order=None, file_type='json'):
         """
@@ -199,17 +213,20 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/release/series?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
-    def series(self):
+    def series(self, series_id:str, realtime_start=None, realtime_end=None, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/series.html
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/sources?api_key={0}&file_type={1}".format(self.api_key, file_type)
+        url = "https://api.stlouisfed.org/fred/series?api_key={0}&file_type={1}&series_id={2}"
+        url = url.format(self.api_key, file_type, series_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_categories(self, file_type='json'):
         """
@@ -219,7 +236,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/sources?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_observations(self, file_type='json'):
         """
@@ -230,7 +248,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_release(self, file_type='json'):
         """
@@ -242,19 +261,24 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
-    def series_search(self, file_type='json'):
+    def series_search(self, search_text:str, file_type='json'):
         """
         https://research.stlouisfed.org/docs/api/fred/series_search.html
         :param file_type:
         :return:
         """
-        url = "https://api.stlouisfed.org/fred/series/observations?api_key={0}&file_type={1}"
-        url = url.format(self.api_key, file_type)
+        url = "https://api.stlouisfed.org/fred/series/search?api_key={0}&file_type={1}&search_text={2}"
+        url = url.format(self.api_key, file_type, search_text)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        print(json_data)
+        return json_data
+
+
 
     def series_search_related_tags(self, file_type='json'):
         """
@@ -266,7 +290,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_search_tags(self, file_type='json'):
         """
@@ -278,7 +303,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_tags(self, file_type='json'):
         """
@@ -290,7 +316,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_updates(self, realtime_start=None, realtime_end=None, limit=None, offset=None, filter_value=None,
                     time_start=None, time_end=None, file_type='json'):
@@ -310,7 +337,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def series_vintagedates(self, series_id, realtime_start=None, realtime_end=None, limit=None, offset=None,
                             sort_order=None, file_type='json'):
@@ -331,7 +359,8 @@ class FederalReserveEconomicData(object):
         url = url.format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def sources(self, file_type='json'):
         """
@@ -345,7 +374,9 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/sources?api_key={0}&file_type={1}".format(self.api_key, file_type)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET',url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
+
 
     def source(self, source_id, file_type='json'):
         """
@@ -357,7 +388,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/source?source_id={2}&api_key={0}&file_type={1}".format(self.api_key, file_type, source_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     def source_releases(self, source_id, file_type='json'):
         """
@@ -367,7 +399,8 @@ class FederalReserveEconomicData(object):
         url = "https://api.stlouisfed.org/fred/source/releases?source_id={2}&api_key={0}&file_type={1}".format(self.api_key, file_type, source_id)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         response = http.request('GET', url)
-        print(response.data)
+        json_data = json.loads(response.data)
+        return json_data
 
     ###########################
     ## Convenience Functions ##
