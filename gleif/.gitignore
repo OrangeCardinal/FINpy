@@ -1,0 +1,29 @@
+.pypirc
+pip-selfcheck.json
+# Python stuff
+*.py[cod]
+
+# IDE stuff
+.idea/
+*.iml
+
+# Python venv stuff
+bin
+lib
+pyvenv.cfg
+venv
+
+# Folders
+dist/
+
+# Python setuptools
+.cache
+*.egg-info
+
+# Unit test / coverage reports
+.coverage
+.tox
+*.pytest_cache
+
+# Emacs backup files
+*~
